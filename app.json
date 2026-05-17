@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Io ci sono",
+    "slug": "io-ci-sono",
+    "scheme": "iocisono",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B0D10"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.iocisono.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Usiamo la posizione solo mentre l'app e aperta per mostrarti i luoghi vicini."
+      }
+    },
+    "android": {
+      "package": "com.iocisono.app",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0B0D10"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-location"
+    ]
+  }
+}

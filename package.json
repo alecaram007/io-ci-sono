@@ -1,0 +1,52 @@
+{
+  "name": "io-ci-sono",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "node ./scripts/expo-runner.mjs start",
+    "start:online": "node ./scripts/expo-runner.mjs start --port 8081 --tunnel",
+    "start:lan": "node ./scripts/expo-runner.mjs start --port 8081 --host lan",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "web:export": "node ./scripts/expo-runner.mjs export --platform web",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run test",
+    "check:images": "node scripts/check-place-images.mjs",
+    "report:nightly": "node scripts/nightly-ci-report.mjs",
+    "report:publish-assets": "node scripts/publish-nightly-report-assets.mjs",
+    "report:verify-assets": "node scripts/verify-nightly-report-assets.mjs",
+    "icons": "node scripts/render-icons.mjs"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@supabase/supabase-js": "^2.105.4",
+    "expo": "~54.0.33",
+    "expo-haptics": "~15.0.8",
+    "expo-linear-gradient": "~15.0.8",
+    "expo-location": "~19.0.8",
+    "expo-status-bar": "~3.0.9",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-maps": "1.20.1",
+    "react-native-qrcode-svg": "^6.3.21",
+    "react-native-reanimated": "~4.1.1",
+    "react-native-svg": "15.12.1",
+    "react-native-url-polyfill": "^3.0.0",
+    "react-native-web": "^0.21.0",
+    "react-native-worklets": "0.5.1"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/react": "~19.1.0",
+    "babel-preset-expo": "~54.0.10",
+    "typescript": "~5.9.2",
+    "vitest": "^4.1.5"
+  },
+  "private": true,
+  "overrides": {
+    "postcss": "^8.5.14"
+  }
+}
