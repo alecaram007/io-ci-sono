@@ -1,0 +1,81 @@
+name: Deploy Web (GitHub Pages)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Compute base URL for Expo export
+        run: |
+          repo="${GITHUB_REPOSITORY#*/}"
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          repo_lower="${repo,,}"
+
+          if [ "$repo_lower" = "${owner}.github.io" ]; then
+            echo "EXPO_DEPLOY_BASE_URL=/" >> "$GITHUB_ENV"
+            echo "Using root base URL for user/org Pages site."
+          else
+            echo "EXPO_DEPLOY_BASE_URL=/$repo" >> "$GITHUB_ENV"
+            echo "Using project base URL: /$repo"
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.0
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate nightly report bundle
+        env:
+          NIGHTLY_FAIL_ON_IMAGE_CHECK: '0'
+          NIGHTLY_FAIL_ON_IMAGE_INCONCLUSIVE: '0'
+          NIGHTLY_CHECK_TIMEOUT_MS: '1200000'
+        run: npm run report:nightly
+
+      - name: Attach nightly report assets to dist
+        run: npm run report:publish-assets
+
+      - name: Verify nightly report bundle integrity
+        run: npm run report:verify-assets
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
