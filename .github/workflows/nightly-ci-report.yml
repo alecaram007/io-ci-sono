@@ -1,0 +1,126 @@
+name: Nightly CI Report
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '10 1 * * *'
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  nightly-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    outputs:
+      blocking_failure: ${{ steps.status.outputs.blocking_failure }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.0
+          cache: npm
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Compute base URL for Expo export
+        run: |
+          repo="${GITHUB_REPOSITORY#*/}"
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          repo_lower="${repo,,}"
+
+          if [ "$repo_lower" = "${owner}.github.io" ]; then
+            echo "EXPO_DEPLOY_BASE_URL=/" >> "$GITHUB_ENV"
+            echo "Using root base URL for user/org Pages site."
+          else
+            echo "EXPO_DEPLOY_BASE_URL=/$repo" >> "$GITHUB_ENV"
+            echo "Using project base URL: /$repo"
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate nightly CI report
+        id: report
+        continue-on-error: true
+        env:
+          NIGHTLY_FAIL_ON_IMAGE_INCONCLUSIVE: '1'
+          NIGHTLY_CHECK_TIMEOUT_MS: '1200000'
+        run: npm run report:nightly
+
+      - name: Attach nightly report assets to dist
+        if: always()
+        run: npm run report:publish-assets
+
+      - name: Verify nightly report bundle integrity
+        if: always()
+        run: npm run report:verify-assets
+
+      - name: Publish report in job summary
+        if: always()
+        run: |
+          if [ -f nightly-report/nightly-ci-report.md ]; then
+            cat nightly-report/nightly-ci-report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Nightly report markdown not found." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Capture blocking status
+        if: always()
+        id: status
+        run: |
+          blocking="$(node -e "const fs=require('node:fs'); try { const raw=fs.readFileSync('nightly-report/nightly-ci-report.json','utf8'); const json=JSON.parse(raw); process.stdout.write(json.hasBlockingFailure ? 'true' : 'false'); } catch { process.stdout.write('true'); }")"
+          echo "blocking_failure=$blocking" >> "$GITHUB_OUTPUT"
+          echo "Blocking failure: $blocking"
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-ci-report
+          path: nightly-report
+          if-no-files-found: error
+
+      - name: Upload pages artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: nightly-report
+    if: always()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  enforce-status:
+    needs:
+      - nightly-report
+      - deploy
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail workflow on blocking checks
+        run: |
+          if [ "${{ needs.nightly-report.outputs.blocking_failure }}" = "true" ]; then
+            echo "Nightly report contains blocking failures."
+            exit 1
+          fi
+          echo "Nightly report passed all blocking checks."
