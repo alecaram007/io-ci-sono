@@ -91,6 +91,11 @@ export type PlaceMedia = {
   credit: string;
   sourceUrl?: string;
   fallbackAsset: 'icon' | 'splash';
+  brand: {
+    name: string;
+    category: string;
+    heroColor: string;
+  };
 };
 
 export type PlaceViewModel = PlaceWithPresence & {

@@ -19,11 +19,14 @@ const PROVINCE_FALLBACK_IMAGE: Record<string, string> = {
   RG: img('Ragusa Ibla.jpg'),
 };
 
+// I luoghi specifici (locali nominati) restano senza imageUrl così la UI mostra
+// una "brand card" col nome del locale invece di una foto generica fuorviante.
+// Le aree geografiche (lungomare, piazze, isole) tengono la foto Wikimedia
+// quando esplicitamente impostata.
 const enrichPlaceMedia = (place: Place): Place => ({
   ...place,
-  imageUrl: place.imageUrl ?? PROVINCE_FALLBACK_IMAGE[place.province] ?? PROVINCE_FALLBACK_IMAGE.PA,
-  imageCredit: place.imageCredit ?? DEFAULT_IMAGE_CREDIT,
-  sourceUrl: place.sourceUrl ?? DEFAULT_SOURCE_URL,
+  imageCredit: place.imageCredit ?? (place.imageUrl ? DEFAULT_IMAGE_CREDIT : undefined),
+  sourceUrl: place.sourceUrl ?? (place.imageUrl ? DEFAULT_SOURCE_URL : undefined),
 });
 
 const coreSicilyPlaces: Place[] = [
@@ -207,63 +210,63 @@ const coreSicilyPlaces: Place[] = [
     name: 'Oceanomare',
     category: 'Beach lounge',
     description: 'Storico chiosco-lounge sul lungomare di San Leone: aperitivo, cocktail e musica fronte mare.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2613, longitude: 13.5818, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['lounge', 'lungomare', 'aperitivo'], imageUrl: img('San Leone Agrigento.JPG'), imageCredit: 'Lungomare San Leone · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 81, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2613, longitude: 13.5818, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['lounge', 'lungomare', 'aperitivo'], popularityScore: 81, isActive: true,
   },
   {
     id: 'place-ag-san-leone-la-terza',
     name: 'La Terza',
     category: 'Beach lounge',
     description: 'Chiosco-lounge storico sulla terza spiaggia di San Leone: musica, cocktail e movida estiva.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2594, longitude: 13.5915, timezone: 'Europe/Rome', heroColor: '#f26d8f', vibeTags: ['lounge', 'beach', 'estate'], imageUrl: img('San Leone AG, Italy - panoramio.jpg'), imageCredit: 'Lungomare San Leone · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 78, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2594, longitude: 13.5915, timezone: 'Europe/Rome', heroColor: '#f26d8f', vibeTags: ['lounge', 'beach', 'estate'], popularityScore: 78, isActive: true,
   },
   {
     id: 'place-ag-san-leone-la-rotta',
     name: 'La Rotta',
     category: 'Cocktail bar',
     description: 'Cocktail bar di riferimento del lungomare San Leone: serate piene da maggio a settembre.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2603, longitude: 13.5873, timezone: 'Europe/Rome', heroColor: '#c2ff45', vibeTags: ['cocktail', 'lungomare', 'estate'], imageUrl: img('Foce del fiume San Leone.jpg'), imageCredit: 'Foce del fiume San Leone · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 74, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2603, longitude: 13.5873, timezone: 'Europe/Rome', heroColor: '#c2ff45', vibeTags: ['cocktail', 'lungomare', 'estate'], popularityScore: 74, isActive: true,
   },
   {
     id: 'place-ag-san-leone-tropical-bar',
     name: 'Tropical Bar',
     category: 'Cocktail bar',
     description: 'Cocktail bar storico del lungomare San Leone: serate piene e ritrovo classico delle estati agrigentine.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2585, longitude: 13.5940, timezone: 'Europe/Rome', heroColor: '#61d095', vibeTags: ['cocktail', 'lungomare', 'san leone'], imageUrl: img('San Leone, Agrigento, Sicily, Italy - panoramio.jpg'), imageCredit: 'Lungomare San Leone · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 73, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2585, longitude: 13.5940, timezone: 'Europe/Rome', heroColor: '#61d095', vibeTags: ['cocktail', 'lungomare', 'san leone'], popularityScore: 73, isActive: true,
   },
   {
     id: 'place-ag-san-leone-holiday-park',
     name: 'Holiday Park',
     category: 'Beach club',
     description: 'Lido e beach club di San Leone: piscina, musica e cocktail dal pomeriggio fino a tarda sera.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2578, longitude: 13.5961, timezone: 'Europe/Rome', heroColor: '#f3d35b', vibeTags: ['beach club', 'piscina', 'san leone'], imageUrl: img('San Leone Agrigento.JPG'), imageCredit: 'Lungomare San Leone · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 76, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2578, longitude: 13.5961, timezone: 'Europe/Rome', heroColor: '#f3d35b', vibeTags: ['beach club', 'piscina', 'san leone'], popularityScore: 76, isActive: true,
   },
   {
     id: 'place-ag-mia-garden',
     name: 'Mia Garden',
     category: 'Discoteca',
     description: 'Discoteca-garden della zona Agrigento: pista all\'aperto, dj set e una delle serate piu seguite dell\'estate.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2706, longitude: 13.6080, timezone: 'Europe/Rome', heroColor: '#c2ff45', vibeTags: ['discoteca', 'garden', 'dj set'], imageUrl: img('Valle dei Templi Agrigento.jpg'), imageCredit: 'Agrigento · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Agrigento', popularityScore: 85, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2706, longitude: 13.6080, timezone: 'Europe/Rome', heroColor: '#c2ff45', vibeTags: ['discoteca', 'garden', 'dj set'], popularityScore: 85, isActive: true,
   },
   {
     id: 'place-ag-koveed',
     name: 'Koveed',
     category: 'Discoteca',
     description: 'Discoteca della zona Agrigento: pista, dj set e serate piene nei weekend e in estate.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2641, longitude: 13.5880, timezone: 'Europe/Rome', heroColor: '#81a8ff', vibeTags: ['discoteca', 'dj set', 'nightlife'], imageUrl: img('San Leone AG, Italy - panoramio.jpg'), imageCredit: 'Lungomare San Leone · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 79, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2641, longitude: 13.5880, timezone: 'Europe/Rome', heroColor: '#81a8ff', vibeTags: ['discoteca', 'dj set', 'nightlife'], popularityScore: 79, isActive: true,
   },
   {
     id: 'place-ag-fabrik',
     name: 'Fabrik',
     category: 'Discoteca',
     description: 'Discoteca-fabbrica nella provincia di Agrigento: pista grande, dj internazionali e serate a tema.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2885, longitude: 13.5740, timezone: 'Europe/Rome', heroColor: '#f26d8f', vibeTags: ['discoteca', 'dj', 'industrial'], imageUrl: img('Valle dei Templi Agrigento.jpg'), imageCredit: 'Agrigento · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Agrigento', popularityScore: 88, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2885, longitude: 13.5740, timezone: 'Europe/Rome', heroColor: '#f26d8f', vibeTags: ['discoteca', 'dj', 'industrial'], popularityScore: 88, isActive: true,
   },
   {
     id: 'place-ag-acquaselz',
     name: 'Acquaselz',
     category: 'Beach club',
     description: 'Lido e beach club della costa agrigentina: piscina, aperitivo e serate musicali sul mare.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2599, longitude: 13.5995, timezone: 'Europe/Rome', heroColor: '#61d095', vibeTags: ['beach club', 'piscina', 'lungomare'], imageUrl: img('Foce del fiume San Leone.jpg'), imageCredit: 'Foce del fiume San Leone · Wikimedia Commons (foto di contesto, non del locale)', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 72, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2599, longitude: 13.5995, timezone: 'Europe/Rome', heroColor: '#61d095', vibeTags: ['beach club', 'piscina', 'lungomare'], popularityScore: 72, isActive: true,
   },
   {
     id: 'place-cl-piazza-garibaldi',
