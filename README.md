@@ -175,3 +175,11 @@ Il report pubblico e raggiungibile su `https://<owner>.github.io/<repo>/nightly-
 - La posizione GPS viene richiesta solo in foreground per centrare la mappa; non viene salvata come posizione live.
 - Il conteggio totale dei luoghi e pubblico; gli avatar/presenze nominative sono visibili solo agli amici accettati.
 - La presenza puo essere spostata durante la stessa serata: il vecchio luogo scende e il nuovo sale.
+
+## Author
+
+Built and maintained by **[Alessandro Caramazza](https://alessandrocaramazza.it)** — informatico in Sicilia. Software su misura, automazioni, gestionali e bot per PMI.
+
+- 🌐 [alessandrocaramazza.it](https://alessandrocaramazza.it)
+- 💬 [WhatsApp](https://wa.me/393519006821)
+- 📧 [alessandro.caramazza@gmail.com](mailto:alessandro.caramazza@gmail.com)
