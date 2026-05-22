@@ -39,7 +39,14 @@
       "output": "single"
     },
     "plugins": [
-      "expo-location"
-    ]
+      "expo-location",
+      "expo-image-picker"
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    }
   }
 }
