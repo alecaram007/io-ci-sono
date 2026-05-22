@@ -54,8 +54,11 @@ export function createMockPresences(nightKey: string, activePlaces: Place[] = si
     updatedAt: stamp,
   }));
 
+  // popularityScore arriva da scoring 1-150; in demo scaliamo /8 così "stasera
+  // in Sicilia" mostra ~1.500 persone credibili invece di ~30k fittizie.
   const crowd = activePlaces.flatMap((place) => {
-    const count = place.popularityScore ?? 12;
+    const raw = place.popularityScore ?? 12;
+    const count = Math.max(0, Math.round(raw / 8));
     return Array.from({ length: count }, (_, index) => ({
       id: `crowd-${place.id}-${index}`,
       userId: `crowd-${place.id}-${index}`,

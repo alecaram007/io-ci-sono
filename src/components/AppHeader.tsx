@@ -79,7 +79,7 @@ export function AppHeader({
         </TouchableOpacity>
       </View>
 
-      <Text style={[styles.headline, { fontFamily: titleFont }]}>{headline}</Text>
+      <Text style={[styles.headline, { fontFamily: titleFont }]} numberOfLines={1} adjustsFontSizeToFit>{headline}</Text>
 
       <View style={styles.chipRow}>
         <TouchableOpacity
@@ -91,14 +91,10 @@ export function AppHeader({
         >
           <View style={[styles.incognitoDot, isIncognito && styles.incognitoDotOn]} />
           <Text style={[styles.incognitoText, isIncognito && styles.incognitoTextOn]}>
-            {isIncognito ? 'Stasera invisibile · ON' : 'Stasera invisibile'}
+            {isIncognito ? '👻 invisibile · on' : '👻 invisibile'}
           </Text>
+          {isDemoMock ? <Text style={styles.demoInline}> · demo</Text> : null}
         </TouchableOpacity>
-        {isDemoMock ? (
-          <View style={styles.demoBadge} accessibilityElementsHidden importantForAccessibility="no">
-            <Text style={styles.demoBadgeText}>demo · dati locali</Text>
-          </View>
-        ) : null}
       </View>
     </View>
   );
@@ -151,11 +147,10 @@ const styles = StyleSheet.create({
   headline: {
     color: colors.fog,
     fontFamily: fonts.display,
-    fontSize: 34,
-    letterSpacing: -1,
-    lineHeight: 36,
-    maxWidth: 320,
-    marginTop: 4,
+    fontSize: 28,
+    letterSpacing: -0.8,
+    lineHeight: 32,
+    marginTop: 2,
   },
   chipRow: {
     flexDirection: 'row',
@@ -196,6 +191,13 @@ const styles = StyleSheet.create({
   },
   incognitoTextOn: {
     color: colors.acid,
+  },
+  demoInline: {
+    color: colors.muted,
+    fontFamily: fonts.mono,
+    fontSize: 10,
+    letterSpacing: 1.3,
+    textTransform: 'uppercase',
   },
   demoBadge: {
     alignSelf: 'flex-start',

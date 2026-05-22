@@ -127,6 +127,8 @@ export type AdminPlaceDraft = {
   latitude: string;
   longitude: string;
   description: string;
+  /** URI locale della foto scelta dall'admin (local file:// o https). Opzionale. */
+  photoUri?: string;
 };
 
 export type AppErrorState = {
