@@ -5,16 +5,31 @@ type SetPresenceInput = {
   userId: string;
   placeId: string;
   nightKey: string;
+  isIncognito?: boolean;
   now?: Date;
 };
 
-export function setPresence({ presences, userId, placeId, nightKey, now = new Date() }: SetPresenceInput) {
+/**
+ * Una presenza si considera "viva" se aggiornata negli ultimi PRESENCE_FRESHNESS_MS.
+ * Dopo, scade automaticamente — niente fantasmi nei conteggi.
+ */
+export const PRESENCE_FRESHNESS_MS = 4 * 60 * 60 * 1000;
+
+export function isPresenceFresh(presence: NightlyPresence, now: Date = new Date()): boolean {
+  const updated = Date.parse(presence.updatedAt);
+  if (Number.isNaN(updated)) return true;
+  return now.getTime() - updated <= PRESENCE_FRESHNESS_MS;
+}
+
+export function setPresence({ presences, userId, placeId, nightKey, isIncognito, now = new Date() }: SetPresenceInput) {
   const stamp = now.toISOString();
   const existing = presences.find((presence) => presence.userId === userId && presence.nightKey === nightKey);
 
   if (existing?.placeId === placeId) {
     return presences.map((presence) =>
-      presence.id === existing.id ? { ...presence, updatedAt: stamp } : presence,
+      presence.id === existing.id
+        ? { ...presence, updatedAt: stamp, isIncognito: isIncognito ?? presence.isIncognito ?? false }
+        : presence,
     );
   }
 
@@ -31,6 +46,7 @@ export function setPresence({ presences, userId, placeId, nightKey, now = new Da
       nightKey,
       createdAt: existing?.createdAt ?? stamp,
       updatedAt: stamp,
+      isIncognito: isIncognito ?? false,
     },
   ];
 }

@@ -21,6 +21,34 @@ const HEAT_COPY: Record<PlaceWithPresence['heatLevel'], string> = {
   wild: 'pieno vivo',
 };
 
+function formatDistance(km: number): string {
+  if (km < 1) {
+    const meters = Math.max(50, Math.round(km * 1000 / 10) * 10);
+    return `${meters} m da te`;
+  }
+  if (km < 10) return `${km.toFixed(1)} km da te`;
+  return `${Math.round(km)} km da te`;
+}
+
+function walkingTimeLabel(km: number): string {
+  // velocità media camminata 5 km/h → 12 minuti per km
+  const minutes = Math.max(2, Math.round(km * 12));
+  if (minutes < 60) return `${minutes} min a piedi`;
+  const hours = Math.floor(minutes / 60);
+  const rem = minutes % 60;
+  return rem === 0 ? `${hours}h a piedi` : `${hours}h ${rem}m a piedi`;
+}
+
+function friendCopy(avatars: PlaceWithPresence['visibleAvatars']): string {
+  const names = avatars.map((a) => a.displayName.split(/\s+/)[0]).filter(Boolean);
+  if (names.length === 0) return '';
+  if (names.length === 1) return `${names[0]} ci sta`;
+  if (names.length === 2) return `${names[0]} e ${names[1]} ci sono`;
+  if (names.length === 3) return `${names[0]}, ${names[1]} e ${names[2]} ci sono`;
+  const head = names.slice(0, 2).join(', ');
+  return `${head} e altri ${names.length - 2} amici`;
+}
+
 export function NowPlayingDeck({ places, totalTonight, tonightLabel, onSetPresence, onOpenDetail }: Props) {
   const userPlaceIndex = places.findIndex((place) => place.isUserHere);
   const initialIndex = userPlaceIndex >= 0 ? userPlaceIndex : 0;
@@ -44,7 +72,10 @@ export function NowPlayingDeck({ places, totalTonight, tonightLabel, onSetPresen
 
   const safeIndex = Math.min(focusIndex, places.length - 1);
   const focused = places[safeIndex];
-  const queue = places.filter((place) => place.id !== focused.id);
+  // Limita la coda ai primi 12 (oltre, montare TouchableOpacity per centinaia
+  // di luoghi rallenta scroll e re-render su dataset grandi).
+  const queue = places.filter((place) => place.id !== focused.id).slice(0, 12);
+  const queueRemainder = Math.max(0, places.length - 1 - queue.length);
 
   const skipPrev = () => {
     void Haptics.selectionAsync();
@@ -107,11 +138,36 @@ export function NowPlayingDeck({ places, totalTonight, tonightLabel, onSetPresen
         {focused.category} · {focused.city} · {focused.province}
       </Text>
 
+      {focused.distanceKm !== undefined ? (
+        <Text style={styles.distanceLine} numberOfLines={1}>
+          📍 {formatDistance(focused.distanceKm)} · {walkingTimeLabel(focused.distanceKm)}
+        </Text>
+      ) : null}
+
+      {focused.visibleAvatars.length > 0 ? (
+        <View style={styles.friendsRow}>
+          <View style={styles.friendsStack}>
+            {focused.visibleAvatars.slice(0, 4).map((avatar, index) => (
+              <View
+                key={avatar.id}
+                style={[
+                  styles.friendDot,
+                  { backgroundColor: avatar.avatarColor, marginLeft: index === 0 ? 0 : -8 },
+                ]}
+              />
+            ))}
+          </View>
+          <Text style={styles.friendsText} numberOfLines={1}>
+            {friendCopy(focused.visibleAvatars)}
+          </Text>
+        </View>
+      ) : null}
+
       <View style={styles.progressBar}>
         <View style={[styles.progressFill, { width: `${progressPct}%` }]} />
       </View>
       <View style={styles.progressMeta}>
-        <Text style={styles.progressMetaText}>{focused.totalCount} di {totalTonight} stasera</Text>
+        <Text style={styles.progressMetaText}>{focused.totalCount} persone stasera</Text>
         <Text style={[styles.progressMetaText, styles.progressMetaTextHot]}>{HEAT_COPY[focused.heatLevel]}</Text>
       </View>
 
@@ -146,7 +202,9 @@ export function NowPlayingDeck({ places, totalTonight, tonightLabel, onSetPresen
         <View style={styles.queue}>
           <View style={styles.queueHead}>
             <Text style={styles.queueLabel}>↓ Prossimi in coda</Text>
-            <Text style={styles.queueMore}>{queue.length} POSTI</Text>
+            <Text style={styles.queueMore}>
+              {queueRemainder > 0 ? `${queue.length} di ${queue.length + queueRemainder + 1} POSTI` : `${queue.length} POSTI`}
+            </Text>
           </View>
           {queue.map((place) => (
             <TouchableOpacity
@@ -171,6 +229,9 @@ export function NowPlayingDeck({ places, totalTonight, tonightLabel, onSetPresen
               </View>
             </TouchableOpacity>
           ))}
+          {queueRemainder > 0 ? (
+            <Text style={styles.queueRemainder}>+{queueRemainder} altri luoghi · affina la ricerca per vederli</Text>
+          ) : null}
         </View>
       ) : null}
     </View>
@@ -299,6 +360,43 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
     marginTop: 4,
+  },
+  distanceLine: {
+    color: colors.acid,
+    fontFamily: fonts.mono,
+    fontSize: 11,
+    letterSpacing: 1.2,
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  friendsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    gap: 8,
+    marginTop: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: tints.fog(0.05),
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: tints.fog(0.08),
+  },
+  friendsStack: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  friendDot: {
+    width: 18,
+    height: 18,
+    borderRadius: 999,
+    borderWidth: 2,
+    borderColor: colors.panel,
+  },
+  friendsText: {
+    color: colors.fog,
+    fontFamily: fonts.body,
+    fontSize: 12,
   },
   progressBar: {
     height: 4,
@@ -435,5 +533,14 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textTransform: 'uppercase',
     marginTop: 2,
+  },
+  queueRemainder: {
+    color: colors.muted,
+    fontFamily: fonts.mono,
+    fontSize: 9,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });

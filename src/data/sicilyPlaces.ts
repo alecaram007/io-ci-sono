@@ -35,7 +35,7 @@ const coreSicilyPlaces: Place[] = [
     name: 'Vucciria / Piazza Caracciolo',
     category: 'Movida market',
     description: 'Il classico punto di ritrovo palermitano dopo cena: street food, drink veloci, piazza piena e flusso continuo fino a tardi.',
-    city: 'Palermo', province: 'PA', region: 'Sicilia', country: 'Italia', latitude: 38.1175, longitude: 13.3631, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['movida', 'street food', 'after midnight'], imageUrl: img('Mercato Vucciria, Castellammare, Palermo, Sicily, Italy - panoramio (1).jpg'), imageCredit: 'Wikimedia Commons / trolvag / CC BY-SA 3.0', sourceUrl: 'https://www.apartmentincatania.com/en/catania-nightlife/', popularityScore: 146, isActive: true,
+    city: 'Palermo', province: 'PA', region: 'Sicilia', country: 'Italia', latitude: 38.1175, longitude: 13.3631, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['movida', 'street food', 'after midnight'], imageUrl: img('Mercato Vucciria, Castellammare, Palermo, Sicily, Italy - panoramio (1).jpg'), imageCredit: 'Wikimedia Commons / trolvag / CC BY-SA 3.0', sourceUrl: 'https://www.apartmentincatania.com/en/catania-nightlife/', popularityScore: 146, isActive: true, factoid: 'La Vucciria nasce come mercato arabo del IX secolo. Oggi la piazza è il salotto notturno di Palermo: si beve in piedi e si urla.',
   },
   {
     id: 'place-pa-santanna',
@@ -49,7 +49,7 @@ const coreSicilyPlaces: Place[] = [
     name: 'Mondello lungomare',
     category: 'Beach bars',
     description: 'Spiaggia, passeggio e locali sul mare: in estate e il radar piu immediato per gruppi e serate leggere.',
-    city: 'Palermo', province: 'PA', region: 'Sicilia', country: 'Italia', latitude: 38.2046, longitude: 13.3235, timezone: 'Europe/Rome', heroColor: '#61d095', vibeTags: ['mare', 'summer', 'aperitivo'], imageUrl: img('Mondello palermo.jpg'), imageCredit: 'Wikimedia Commons / Dedda71 / CC BY 3.0', sourceUrl: 'https://www.viandantesiculo.it/serate-movida-sicilia/', popularityScore: 95, isActive: true,
+    city: 'Palermo', province: 'PA', region: 'Sicilia', country: 'Italia', latitude: 38.2046, longitude: 13.3235, timezone: 'Europe/Rome', heroColor: '#61d095', vibeTags: ['mare', 'summer', 'aperitivo'], imageUrl: img('Mondello palermo.jpg'), imageCredit: 'Wikimedia Commons / Dedda71 / CC BY 3.0', sourceUrl: 'https://www.viandantesiculo.it/serate-movida-sicilia/', popularityScore: 95, isActive: true, factoid: 'Mondello era una palude bonificata a inizio Novecento. Lo stabilimento liberty è del 1913: ancora oggi è il salotto del mare a Palermo.',
   },
   {
     id: 'place-pa-cefalu',
@@ -175,14 +175,14 @@ const coreSicilyPlaces: Place[] = [
     name: 'San Leone lungomare',
     category: 'Lungomare',
     description: 'Il punto serale piu immediato di Agrigento: lidi, bar e passeggio sul mare dopo cena.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2617, longitude: 13.5852, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['mare', 'lidi', 'agrigento'], imageUrl: img('San Leone Agrigento.JPG'), imageCredit: 'Vista lungomare · Wikimedia Commons', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 72, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2617, longitude: 13.5852, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['mare', 'lidi', 'agrigento'], imageUrl: img('San Leone Agrigento.JPG'), imageCredit: 'Vista lungomare · Wikimedia Commons', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:San_Leone_(Agrigento)', popularityScore: 72, isActive: true, factoid: 'A San Leone le serate iniziano alle 22 e finiscono all\'alba: chioschi, lidi e passeggiate sul molo Vivaldi.',
   },
   {
     id: 'place-ag-scala-turchi',
     name: 'Scala dei Turchi / Realmonte',
     category: 'Sunset beach',
     description: 'Tramonto, beach bar e flussi turistici fortissimi: ottimo segnale per serate estive in zona Realmonte.',
-    city: 'Realmonte', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2908, longitude: 13.4728, timezone: 'Europe/Rome', heroColor: '#61d095', vibeTags: ['sunset', 'beach', 'tourism'], imageUrl: img('Scala dei Turchi.jpg'), imageCredit: 'Scala dei Turchi · Wikimedia Commons', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Scala_dei_Turchi', popularityScore: 69, isActive: true,
+    city: 'Realmonte', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2908, longitude: 13.4728, timezone: 'Europe/Rome', heroColor: '#61d095', vibeTags: ['sunset', 'beach', 'tourism'], imageUrl: img('Scala dei Turchi.jpg'), imageCredit: 'Scala dei Turchi · Wikimedia Commons', sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Scala_dei_Turchi', popularityScore: 69, isActive: true, factoid: 'Il nome "Scala dei Turchi" viene dalle incursioni saracene del XVI secolo: la falesia di marna bianca era il loro punto di sbarco.',
   },
   {
     id: 'place-ag-sciacca',
@@ -210,14 +210,14 @@ const coreSicilyPlaces: Place[] = [
     name: 'Oceanomare',
     category: 'Beach lounge',
     description: 'Storico chiosco-lounge sul lungomare di San Leone: aperitivo, cocktail e musica fronte mare.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2613, longitude: 13.5818, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['lounge', 'lungomare', 'aperitivo'], popularityScore: 81, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2613, longitude: 13.5818, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['lounge', 'lungomare', 'aperitivo'], popularityScore: 81, isActive: true, factoid: 'Oceanomare è uno dei capisaldi del lungomare: aperitivo lento al tramonto, musica live d\'estate.',
   },
   {
     id: 'place-ag-san-leone-la-terza',
     name: 'La Terza',
     category: 'Beach lounge',
     description: 'Chiosco-lounge storico sulla terza spiaggia di San Leone: musica, cocktail e movida estiva.',
-    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2594, longitude: 13.5915, timezone: 'Europe/Rome', heroColor: '#f26d8f', vibeTags: ['lounge', 'beach', 'estate'], popularityScore: 78, isActive: true,
+    city: 'Agrigento', province: 'AG', region: 'Sicilia', country: 'Italia', latitude: 37.2594, longitude: 13.5915, timezone: 'Europe/Rome', heroColor: '#f26d8f', vibeTags: ['lounge', 'beach', 'estate'], popularityScore: 78, isActive: true, factoid: 'La "terza spiaggia" di San Leone deve il nome alle tre lingue di sabbia oltre il porticciolo: La Terza è la più affollata.',
   },
   {
     id: 'place-ag-san-leone-la-rotta',
@@ -343,7 +343,7 @@ const coreSicilyPlaces: Place[] = [
     name: 'Ortigia lungomare e piazze',
     category: 'Historic island',
     description: 'Aperitivi al tramonto, wine bar e passeggio: la zona piu densa e desiderata di Siracusa.',
-    city: 'Siracusa', province: 'SR', region: 'Sicilia', country: 'Italia', latitude: 37.0607, longitude: 15.2932, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['aperitivo', 'lungomare', 'wine bar'], imageUrl: img('Ortigia.jpg'), imageCredit: 'Wikimedia Commons', sourceUrl: 'https://www.viandantesiculo.it/serate-movida-sicilia/', popularityScore: 108, isActive: true,
+    city: 'Siracusa', province: 'SR', region: 'Sicilia', country: 'Italia', latitude: 37.0607, longitude: 15.2932, timezone: 'Europe/Rome', heroColor: '#ff7a1a', vibeTags: ['aperitivo', 'lungomare', 'wine bar'], imageUrl: img('Ortigia.jpg'), imageCredit: 'Wikimedia Commons', sourceUrl: 'https://www.viandantesiculo.it/serate-movida-sicilia/', popularityScore: 108, isActive: true, factoid: 'Ortigia è un\'isola dentro l\'isola: 1 km² di vicoli barocchi sul mare. Al tramonto al Castello Maniace, di notte vino in piazza Duomo.',
   },
   {
     id: 'place-sr-marzamemi',

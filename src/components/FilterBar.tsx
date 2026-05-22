@@ -1,7 +1,10 @@
+import { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { colors, fonts, tints } from '../theme';
 import type { PlaceFilters } from '../types';
 import type { GeoStatus } from '../hooks/useGeoPreference';
+
+const QUERY_DEBOUNCE_MS = 220;
 
 type Props = {
   filters: PlaceFilters;
@@ -22,6 +25,29 @@ export function FilterBar({
 }: Props) {
   const showProvinceChips = geoStatus !== 'granted' && provinces.length > 0;
 
+  // Query state locale + debounce: il TextInput resta fluido, refreshDiscover
+  // parte solo dopo ~220ms di idle (evita ricalcolo a ogni keystroke su 1000 luoghi).
+  const [queryDraft, setQueryDraft] = useState(filters.query);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setQueryDraft(filters.query);
+  }, [filters.query]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
+  const handleQueryChange = (next: string) => {
+    setQueryDraft(next);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onChange({ ...filters, query: next });
+    }, QUERY_DEBOUNCE_MS);
+  };
+
   const setProvince = (value: string) => {
     onChange({ ...filters, province: filters.province === value ? '' : value, city: '', region: '', country: '' });
   };
@@ -29,8 +55,8 @@ export function FilterBar({
   return (
     <View style={styles.wrap}>
       <TextInput
-        value={filters.query}
-        onChangeText={(query) => onChange({ ...filters, query })}
+        value={queryDraft}
+        onChangeText={handleQueryChange}
         placeholder="Cerca club, pub, piazze..."
         placeholderTextColor="#9C928A"
         style={styles.search}

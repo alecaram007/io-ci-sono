@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Logo } from './Logo';
 import { colors, fonts, tints } from '../theme';
 import type { AuthMode, DataSource, FontPreset, Profile, Surface } from '../types';
@@ -12,12 +11,18 @@ type Props = {
   fontPreset: FontPreset;
   titleFont: string | undefined;
   currentUser: Profile;
-  isAdmin: boolean;
-  onSurfaceChange: (surface: Surface) => void;
+  isIncognito: boolean;
   onToggleFont: () => void;
+  onToggleIncognito: () => void;
 };
 
 const DAY_NAMES = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
+
+const HEADLINES: Record<Surface, string> = {
+  discover: 'La serata, prima di uscire.',
+  friends: 'I tuoi.',
+  admin: 'Gestione luoghi.',
+};
 
 function formatGreeting(now: Date): string {
   const day = DAY_NAMES[now.getDay()];
@@ -39,9 +44,9 @@ export function AppHeader({
   fontPreset,
   titleFont,
   currentUser,
-  isAdmin,
-  onSurfaceChange,
+  isIncognito,
   onToggleFont,
+  onToggleIncognito,
 }: Props) {
   const [now, setNow] = useState(() => new Date());
 
@@ -51,6 +56,8 @@ export function AppHeader({
   }, []);
 
   const greeting = formatGreeting(now);
+  const headline = HEADLINES[surface];
+  const isDemoMock = authMode === 'demo' && dataSource === 'mock';
 
   return (
     <View style={styles.header}>
@@ -72,64 +79,35 @@ export function AppHeader({
         </TouchableOpacity>
       </View>
 
-      <Text style={[styles.headline, { fontFamily: titleFont }]}>La serata, prima di uscire.</Text>
+      <Text style={[styles.headline, { fontFamily: titleFont }]}>{headline}</Text>
 
-      <View style={styles.cardRow} accessibilityRole="tablist">
-        <NavCard label="Scopri" active={surface === 'discover'} onPress={() => onSurfaceChange('discover')} />
-        <NavCard label="Amici" active={surface === 'friends'} onPress={() => onSurfaceChange('friends')} />
-        {isAdmin ? (
-          <NavCard label="Admin" active={surface === 'admin'} onPress={() => onSurfaceChange('admin')} />
+      <View style={styles.chipRow}>
+        <TouchableOpacity
+          onPress={onToggleIncognito}
+          style={[styles.incognitoChip, isIncognito && styles.incognitoChipActive]}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: isIncognito }}
+          accessibilityLabel={isIncognito ? 'Disattiva modalità invisibile' : 'Attiva modalità invisibile'}
+        >
+          <View style={[styles.incognitoDot, isIncognito && styles.incognitoDotOn]} />
+          <Text style={[styles.incognitoText, isIncognito && styles.incognitoTextOn]}>
+            {isIncognito ? 'Stasera invisibile · ON' : 'Stasera invisibile'}
+          </Text>
+        </TouchableOpacity>
+        {isDemoMock ? (
+          <View style={styles.demoBadge} accessibilityElementsHidden importantForAccessibility="no">
+            <Text style={styles.demoBadgeText}>demo · dati locali</Text>
+          </View>
         ) : null}
-      </View>
-
-      <View style={styles.metaRow}>
-        <Text style={styles.metaText}>
-          {authMode === 'otp' ? 'sessione otp' : 'sessione demo'} · {dataSource === 'supabase' ? 'dati live' : 'dati mock'}
-        </Text>
       </View>
     </View>
   );
 }
 
-function NavCard({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
-  if (active) {
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        accessibilityRole="tab"
-        accessibilityState={{ selected: true }}
-        accessibilityLabel={label}
-        style={styles.cardActiveWrap}
-      >
-        <LinearGradient
-          colors={[tints.gold(0.22), tints.copper(0.14)]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.cardActive}
-        >
-          <Text style={styles.cardLabelActive}>{label}</Text>
-        </LinearGradient>
-      </TouchableOpacity>
-    );
-  }
-
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={styles.card}
-      accessibilityRole="tab"
-      accessibilityState={{ selected: false }}
-      accessibilityLabel={label}
-    >
-      <Text style={styles.cardLabel}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
 const styles = StyleSheet.create({
   header: {
-    gap: 14,
-    marginBottom: 18,
+    gap: 12,
+    marginBottom: 14,
   },
   topRow: {
     flexDirection: 'row',
@@ -179,48 +157,58 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     marginTop: 4,
   },
-  cardRow: {
+  chipRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
+    marginTop: 4,
   },
-  card: {
-    flex: 1,
-    backgroundColor: tints.fog(0.04),
-    borderColor: tints.fog(0.08),
-    borderWidth: 1,
-    borderRadius: 18,
-    paddingVertical: 16,
+  incognitoChip: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardActiveWrap: {
-    flex: 1,
-    borderRadius: 18,
-    overflow: 'hidden',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: tints.fog(0.05),
     borderWidth: 1,
-    borderColor: tints.gold(0.5),
+    borderColor: tints.fog(0.1),
   },
-  cardActive: {
-    paddingVertical: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+  incognitoChipActive: {
+    backgroundColor: tints.gold(0.14),
+    borderColor: tints.gold(0.42),
   },
-  cardLabel: {
-    color: colors.fog,
-    fontFamily: fonts.body,
-    fontSize: 14,
+  incognitoDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 999,
+    backgroundColor: tints.fog(0.3),
   },
-  cardLabelActive: {
-    color: colors.fog,
-    fontFamily: fonts.display,
-    fontSize: 14,
-    letterSpacing: -0.2,
+  incognitoDotOn: {
+    backgroundColor: colors.acid,
   },
-  metaRow: {
-    alignItems: 'flex-start',
-  },
-  metaText: {
+  incognitoText: {
     color: colors.muted,
+    fontFamily: fonts.mono,
+    fontSize: 10,
+    letterSpacing: 1.3,
+    textTransform: 'uppercase',
+  },
+  incognitoTextOn: {
+    color: colors.acid,
+  },
+  demoBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: tints.gold(0.08),
+    borderWidth: 1,
+    borderColor: tints.gold(0.2),
+    justifyContent: 'center',
+  },
+  demoBadgeText: {
+    color: colors.acid,
     fontFamily: fonts.mono,
     fontSize: 9,
     letterSpacing: 1.4,

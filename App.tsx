@@ -16,6 +16,7 @@ import Animated, { Easing, FadeInDown, FadeInUp, useAnimatedStyle, useSharedValu
 import { AdminPanel } from './src/components/AdminPanel';
 import { AppHeader } from './src/components/AppHeader';
 import { AuthPanel } from './src/components/AuthPanel';
+import { BottomTabBar } from './src/components/BottomTabBar';
 import { EmptyState } from './src/components/EmptyState';
 import { FilterBar } from './src/components/FilterBar';
 import { FriendsPanel } from './src/components/FriendsPanel';
@@ -81,6 +82,7 @@ export default function App() {
   const [dataSource, setDataSource] = useState<DataSource>('mock');
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [errorState, setErrorState] = useState<AppErrorState>(null);
+  const [isIncognito, setIsIncognito] = useState(false);
 
   const [filters, setFilters] = useState(initialFilters);
   const [currentUser, setCurrentUser] = useState<Profile>(mockCurrentUser);
@@ -258,7 +260,9 @@ export default function App() {
 
     if (dataSource === 'mock') {
       const placeNightKey = getNightKeyForPlace(place);
-      setPresenceList((current) => setPresence({ presences: current, userId: currentUser.id, placeId, nightKey: placeNightKey }));
+      setPresenceList((current) =>
+        setPresence({ presences: current, userId: currentUser.id, placeId, nightKey: placeNightKey, isIncognito }),
+      );
       setDiscoverPlaces((current) => applyOptimisticPresence(current, placeId));
       void Haptics.selectionAsync();
       return;
@@ -364,9 +368,12 @@ export default function App() {
                 fontPreset={fontPreset}
                 titleFont={titleFont}
                 currentUser={currentUser}
-                isAdmin={currentUser.role === 'admin'}
-                onSurfaceChange={setSurface}
+                isIncognito={isIncognito}
                 onToggleFont={() => setFontPreset((current) => (current === 'editorial' ? 'legacy' : 'editorial'))}
+                onToggleIncognito={() => {
+                  setIsIncognito((current) => !current);
+                  void Haptics.selectionAsync();
+                }}
               />
             </Animated.View>
 
@@ -442,6 +449,12 @@ export default function App() {
             ) : null}
           </ScrollView>
 
+          <BottomTabBar
+            surface={surface}
+            isAdmin={currentUser.role === 'admin'}
+            onChange={setSurface}
+          />
+
           <PlaceDetailSheet
             visible={Boolean(selectedPlace)}
             place={selectedPlace}
@@ -481,7 +494,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 18,
-    paddingBottom: 40,
+    paddingBottom: 120, // spazio per il BottomTabBar fisso
   },
   bannerError: {
     backgroundColor: tints.danger(0.18),

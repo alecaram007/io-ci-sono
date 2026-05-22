@@ -54,6 +54,8 @@ export type Place = {
   sourceUrl?: string;
   popularityScore?: number;
   isActive: boolean;
+  /** Pillola di curiosità mostrata nel detail (1 riga). Opzionale. */
+  factoid?: string;
 };
 
 export type NightlyPresence = {
@@ -63,6 +65,11 @@ export type NightlyPresence = {
   nightKey: string;
   createdAt: string;
   updatedAt: string;
+  /**
+   * Se true, la presenza partecipa al conteggio totale ma resta nascosta agli
+   * amici (modalità "stasera invisibile"). Default false.
+   */
+  isIncognito?: boolean;
 };
 
 export type Report = {
