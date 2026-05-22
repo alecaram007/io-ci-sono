@@ -38,6 +38,7 @@ import { setPresence } from './src/domain/presence';
 import { useGeoPreference } from './src/hooks/useGeoPreference';
 import { useMotionPreference } from './src/hooks/useMotionPreference';
 import { useNightClock } from './src/hooks/useNightClock';
+import { usePersistentState } from './src/hooks/usePersistentState';
 import { createAppRepositories } from './src/repository/createAppRepository';
 import type { AppRepository } from './src/repository/types';
 import { applyOptimisticPresence } from './src/services/optimisticPresence';
@@ -77,14 +78,14 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [surface, setSurface] = useState<Surface>('discover');
   const [mode, setMode] = useState<DiscoveryMode>('list');
-  const [fontPreset, setFontPreset] = useState<FontPreset>('editorial');
+  const [fontPreset, setFontPreset] = usePersistentState<FontPreset>('fontPreset', 'editorial');
   const [authMode, setAuthMode] = useState<AuthMode>('demo');
   const [dataSource, setDataSource] = useState<DataSource>('mock');
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [errorState, setErrorState] = useState<AppErrorState>(null);
-  const [isIncognito, setIsIncognito] = useState(false);
+  const [isIncognito, setIsIncognito] = usePersistentState('isIncognito', false);
 
-  const [filters, setFilters] = useState(initialFilters);
+  const [filters, setFilters] = usePersistentState<PlaceFilters>('filters', initialFilters);
   const [currentUser, setCurrentUser] = useState<Profile>(mockCurrentUser);
   const [profiles, setProfiles] = useState<Profile[]>(mockProfiles);
   const [placeList, setPlaceList] = useState<Place[]>(mockPlaces);

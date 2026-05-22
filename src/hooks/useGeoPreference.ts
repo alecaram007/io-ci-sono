@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
 export type GeoStatus = 'idle' | 'pending' | 'granted' | 'denied' | 'unavailable';
@@ -17,6 +18,8 @@ export type GeoPreference = {
   /** Forza lo stato 'denied' senza richiedere il permesso (skip esplicito dell'utente). */
   decline: () => void;
 };
+
+const DECLINE_STORAGE_KEY = 'iocisono:geoDeclined';
 
 async function getCurrentCoords(): Promise<GeoCoords | null> {
   if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.geolocation) {
@@ -40,6 +43,12 @@ async function getCurrentCoords(): Promise<GeoCoords | null> {
 export function useGeoPreference(): GeoPreference {
   const [status, setStatus] = useState<GeoStatus>('idle');
   const [coords, setCoords] = useState<GeoCoords | null>(null);
+  const declinedOnceRef = useRef(false);
+
+  const persistDecline = useCallback((value: boolean) => {
+    declinedOnceRef.current = value;
+    AsyncStorage.setItem(DECLINE_STORAGE_KEY, value ? '1' : '0').catch(() => {});
+  }, []);
 
   const request = useCallback(async () => {
     setStatus('pending');
@@ -53,8 +62,10 @@ export function useGeoPreference(): GeoPreference {
       if (next) {
         setCoords(next);
         setStatus('granted');
+        persistDecline(false);
       } else {
         setStatus('denied');
+        persistDecline(true);
       }
       return;
     }
@@ -62,26 +73,40 @@ export function useGeoPreference(): GeoPreference {
     const permission = await Location.requestForegroundPermissionsAsync();
     if (permission.status !== 'granted') {
       setStatus('denied');
+      persistDecline(true);
       return;
     }
     const next = await getCurrentCoords();
     if (next) {
       setCoords(next);
       setStatus('granted');
+      persistDecline(false);
     } else {
       setStatus('denied');
+      persistDecline(true);
     }
-  }, []);
+  }, [persistDecline]);
 
   const decline = useCallback(() => {
     setCoords(null);
     setStatus('denied');
-  }, []);
+    persistDecline(true);
+  }, [persistDecline]);
 
-  // su mount controlliamo lo stato corrente senza richiedere niente
+  // su mount: ripristina lo stato precedente (denied persistito, oppure granted se sistema lo conferma)
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      try {
+        const declined = await AsyncStorage.getItem(DECLINE_STORAGE_KEY);
+        if (declined === '1' && !cancelled) {
+          declinedOnceRef.current = true;
+          setStatus('denied');
+        }
+      } catch {
+        // storage non disponibile: continua col flusso normale
+      }
+
       if (Platform.OS === 'web') return;
       try {
         const permission = await Location.getForegroundPermissionsAsync();
@@ -91,6 +116,7 @@ export function useGeoPreference(): GeoPreference {
           if (!cancelled && next) {
             setCoords(next);
             setStatus('granted');
+            persistDecline(false);
           }
         }
       } catch {
@@ -100,7 +126,7 @@ export function useGeoPreference(): GeoPreference {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [persistDecline]);
 
   return { status, coords, request, decline };
 }

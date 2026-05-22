@@ -171,6 +171,15 @@ export function NowPlayingDeck({ places, totalTonight, tonightLabel, onSetPresen
         <Text style={[styles.progressMetaText, styles.progressMetaTextHot]}>{HEAT_COPY[focused.heatLevel]}</Text>
       </View>
 
+      {focused.friendCount >= 3 && !focused.isUserHere ? (
+        <View style={styles.crewBanner}>
+          <Text style={styles.crewBannerIcon}>✦</Text>
+          <Text style={styles.crewBannerText} numberOfLines={2}>
+            {focused.friendCount} amici sono già qui · andiamo con loro
+          </Text>
+        </View>
+      ) : null}
+
       <View style={styles.controls}>
         <TouchableOpacity
           onPress={skipPrev}
@@ -397,6 +406,30 @@ const styles = StyleSheet.create({
     color: colors.fog,
     fontFamily: fonts.body,
     fontSize: 12,
+  },
+  crewBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: tints.gold(0.14),
+    borderColor: tints.gold(0.42),
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    marginTop: 14,
+  },
+  crewBannerIcon: {
+    color: colors.acid,
+    fontFamily: fonts.display,
+    fontSize: 18,
+  },
+  crewBannerText: {
+    flex: 1,
+    color: colors.fog,
+    fontFamily: fonts.body,
+    fontSize: 13,
+    lineHeight: 17,
   },
   progressBar: {
     height: 4,
