@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 18,
-    paddingBottom: 160, // spazio per il BottomTabBar fisso + safe area
+    paddingBottom: 200, // spazio extra per BottomTabBar fisso + ultima queue row visibile
   },
   bannerError: {
     backgroundColor: tints.danger(0.18),

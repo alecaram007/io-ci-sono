@@ -88,7 +88,7 @@ export function PlaceDetailSheet({ place, visible, onClose, onSetPresence }: Pro
               accessibilityLabel="Chiudi"
             />
             <Text style={styles.category}>{place.category} · {place.city} · {place.province}</Text>
-            <Text style={styles.title}>{place.name}</Text>
+            <Text style={styles.title} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.7}>{place.name}</Text>
             {place.distanceKm !== undefined ? (
               <Text style={styles.distanceLine}>📍 {formatDistance(place.distanceKm)} · {walkingTimeLabel(place.distanceKm)}</Text>
             ) : null}
@@ -209,9 +209,9 @@ const styles = StyleSheet.create({
   title: {
     color: colors.fog,
     fontFamily: fonts.display,
-    fontSize: 38,
-    letterSpacing: -1,
-    lineHeight: 42,
+    fontSize: 32,
+    letterSpacing: -0.8,
+    lineHeight: 36,
     marginTop: 6,
   },
   distanceLine: {

@@ -29,6 +29,24 @@ const enrichPlaceMedia = (place: Place): Place => ({
   sourceUrl: place.sourceUrl ?? (place.imageUrl ? DEFAULT_SOURCE_URL : undefined),
 });
 
+// Filtro nomi "Camera di Commercio" — ragioni sociali estratte da directory
+// invece di nomi reali del locale visibili al cliente.
+// Esempi rifiutati: "Tizio S.n.c. di Caio", "Mario & C.", "di Rossi Giovanni".
+const BUSINESS_NAME_PATTERNS = [
+  /\bS\.\s*n\.\s*c\./i,
+  /\bS\.\s*r\.\s*l\./i,
+  /\bS\.\s*a\.\s*s\./i,
+  /\bS\.\s*p\.\s*a\./i,
+  /\bS\.\s*c\.\s*a\.\s*r\.\s*l\./i,
+  /\b&\s*C\.?/,
+  /\bdi\s+[A-ZÀ-Ý][a-zà-ÿ']+(?:'\s|\s)+[A-ZÀ-Ý][a-zà-ÿ']+/,
+  /\bdi\s+[A-ZÀ-Ý][a-zà-ÿ']+\s+&\s+[A-ZÀ-Ý][a-zà-ÿ']+/,
+];
+
+function looksLikeRagioneSociale(name: string): boolean {
+  return BUSINESS_NAME_PATTERNS.some((re) => re.test(name));
+}
+
 const coreSicilyPlaces: Place[] = [
   {
     id: 'place-pa-vucciria',
@@ -410,6 +428,6 @@ const coreSicilyPlaces: Place[] = [
   },
 ];
 
-export const sicilyPlaces: Place[] = [...coreSicilyPlaces, ...sicilyBarsPubs, ...sicilyNightclubs, ...sicilyDirectoryVenues].map(
-  enrichPlaceMedia,
-);
+export const sicilyPlaces: Place[] = [...coreSicilyPlaces, ...sicilyBarsPubs, ...sicilyNightclubs, ...sicilyDirectoryVenues]
+  .filter((place) => !looksLikeRagioneSociale(place.name))
+  .map(enrichPlaceMedia);

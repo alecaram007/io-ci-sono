@@ -54,11 +54,13 @@ export function createMockPresences(nightKey: string, activePlaces: Place[] = si
     updatedAt: stamp,
   }));
 
-  // popularityScore arriva da scoring 1-150; in demo scaliamo /8 così "stasera
+  // popularityScore arriva da scoring 1-150; in demo scaliamo /16 così "stasera
   // in Sicilia" mostra ~1.500 persone credibili invece di ~30k fittizie.
+  // Solo i posti popolari sopra una soglia hanno crowd: i microposti restano a 0.
   const crowd = activePlaces.flatMap((place) => {
-    const raw = place.popularityScore ?? 12;
-    const count = Math.max(0, Math.round(raw / 8));
+    const raw = place.popularityScore ?? 0;
+    if (raw < 30) return []; // microposti silenti in demo
+    const count = Math.max(0, Math.round(raw / 16));
     return Array.from({ length: count }, (_, index) => ({
       id: `crowd-${place.id}-${index}`,
       userId: `crowd-${place.id}-${index}`,

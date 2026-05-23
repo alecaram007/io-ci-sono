@@ -210,9 +210,9 @@ export function NowPlayingDeck({ places, totalTonight, tonightLabel, onSetPresen
       {queue.length > 0 ? (
         <View style={styles.queue}>
           <View style={styles.queueHead}>
-            <Text style={styles.queueLabel}>↓ Prossimi in coda</Text>
+            <Text style={styles.queueLabel}>↓ Anche questi stasera</Text>
             <Text style={styles.queueMore}>
-              {queueRemainder > 0 ? `${queue.length} di ${queue.length + queueRemainder + 1} POSTI` : `${queue.length} POSTI`}
+              {queueRemainder > 0 ? `Top ${queue.length}` : `${queue.length} posti`}
             </Text>
           </View>
           {queue.map((place) => (
