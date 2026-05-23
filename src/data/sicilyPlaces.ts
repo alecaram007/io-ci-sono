@@ -1,7 +1,7 @@
 import type { Place } from '../types';
 import { sicilyBarsPubs } from './sicilyBarsPubs';
 import { sicilyNightclubs } from './sicilyNightclubs';
-import { sicilyDirectoryVenues } from './sicilyDirectoryVenues';
+import { sicilyOsmVenues } from './sicilyOsmVenues';
 
 const img = (fileName: string) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=900`;
 const DEFAULT_SOURCE_URL = 'https://en.wikipedia.org/wiki/Sicily';
@@ -428,6 +428,6 @@ const coreSicilyPlaces: Place[] = [
   },
 ];
 
-export const sicilyPlaces: Place[] = [...coreSicilyPlaces, ...sicilyBarsPubs, ...sicilyNightclubs, ...sicilyDirectoryVenues]
+export const sicilyPlaces: Place[] = [...coreSicilyPlaces, ...sicilyBarsPubs, ...sicilyNightclubs, ...sicilyOsmVenues]
   .filter((place) => !looksLikeRagioneSociale(place.name))
   .map(enrichPlaceMedia);
